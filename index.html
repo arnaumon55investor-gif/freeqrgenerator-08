@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Link → QR Generator Pro</title>
+
+<!-- QR LIBRARY (STABLE CDN) -->
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+min-height:100vh;
+background:linear-gradient(135deg,#0f0f17,#111827);
+color:white;
+display:flex;
+justify-content:center;
+align-items:center;
+padding:20px;
+flex-direction:column;
+}
+
+/* CARD */
+
+.container{
+background:rgba(255,255,255,0.06);
+backdrop-filter:blur(25px);
+padding:50px;
+border-radius:30px;
+width:100%;
+max-width:520px;
+text-align:center;
+box-shadow:0 30px 80px rgba(0,0,0,0.6);
+animation:fadeIn 0.8s ease;
+}
+
+h1{
+margin-bottom:20px;
+font-size:26px;
+}
+
+input{
+width:100%;
+padding:15px;
+border-radius:15px;
+border:none;
+outline:none;
+margin-bottom:15px;
+font-size:14px;
+}
+
+button{
+width:100%;
+padding:15px;
+border:none;
+border-radius:15px;
+background:linear-gradient(135deg,#6366f1,#8b5cf6);
+color:white;
+font-weight:600;
+cursor:pointer;
+transition:0.3s;
+margin-top:10px;
+}
+
+button:hover{
+transform:scale(1.05);
+opacity:0.9;
+}
+
+.download{
+background:#22c55e;
+}
+
+#qrcode{
+margin-top:25px;
+display:flex;
+justify-content:center;
+}
+
+/* FOOTER */
+
+footer{
+margin-top:20px;
+font-size:13px;
+opacity:0.6;
+}
+
+footer span{
+cursor:pointer;
+text-decoration:underline;
+}
+
+/* MODALS */
+
+.modal{
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.7);
+justify-content:center;
+align-items:center;
+z-index:1000;
+}
+
+.modal-content{
+background:#1e1e2f;
+padding:30px;
+border-radius:20px;
+max-width:600px;
+max-height:80vh;
+overflow:auto;
+}
+
+.modal-content button{
+margin-top:15px;
+}
+
+/* COOKIE BANNER */
+
+.cookie-banner{
+position:fixed;
+bottom:0;
+width:100%;
+background:#111;
+padding:20px;
+text-align:center;
+display:none;
+font-size:14px;
+}
+
+.cookie-banner button{
+margin:5px;
+padding:8px 14px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+}
+
+.accept{
+background:#22c55e;
+color:white;
+}
+
+.reject{
+background:#ef4444;
+color:white;
+}
+
+@keyframes fadeIn{
+from{opacity:0;transform:translateY(10px);}
+to{opacity:1;transform:translateY(0);}
+}
+
+</style>
+</head>
+<body>
+
+<div class="container">
+<h1>🌐 Link → QR Generator</h1>
+
+<input type="text" id="linkInput" placeholder="Paste your link here...">
+
+<button onclick="generateQR()">Generate QR</button>
+<button class="download" onclick="downloadQR()">Download QR</button>
+
+<div id="qrcode"></div>
+
+<footer>
+Private Tool • 
+<span onclick="openPrivacy()">Privacy Policy</span> |
+<span onclick="openCookies()">Cookie Settings</span>
+</footer>
+</div>
+
+<!-- PRIVACY MODAL -->
+
+<div class="modal" id="privacyModal">
+<div class="modal-content">
+<h2>Privacy Policy</h2>
+<p><strong>Last updated:</strong> 2026</p>
+<br>
+<p>This tool generates QR codes locally inside your browser.</p>
+<p>We do NOT store, track or transmit your links to any server.</p>
+<p>All data stays on your device.</p>
+<br>
+<button onclick="closePrivacy()">Close</button>
+</div>
+</div>
+
+<!-- COOKIE MODAL -->
+
+<div class="modal" id="cookieModal">
+<div class="modal-content">
+<h2>Cookie Preferences</h2>
+<p>Cookies are used only to store preferences.</p>
+<br>
+<label>
+<input type="checkbox" id="analytics">
+Enable analytics cookies
+</label>
+<br><br>
+<button onclick="saveCookies()">Save</button>
+<button onclick="closeCookies()">Cancel</button>
+</div>
+</div>
+
+<!-- COOKIE BANNER -->
+
+<div class="cookie-banner" id="cookieBanner">
+This website uses cookies.
+<button class="accept" onclick="acceptCookies()">Accept</button>
+<button class="reject" onclick="rejectCookies()">Reject</button>
+</div>
+
+<script>
+
+/* QR GENERATOR */
+
+function generateQR(){
+
+const link=document.getElementById("linkInput").value;
+const container=document.getElementById("qrcode");
+
+if(!link){
+alert("Please enter a link");
+return;
+}
+
+container.innerHTML="";
+
+setTimeout(()=>{
+new QRCode(container,{
+text:link,
+width:230,
+height:230,
+colorDark:"#ffffff",
+colorLight:"transparent"
+});
+},100);
+
+}
+
+/* DOWNLOAD */
+
+function downloadQR(){
+const img=document.querySelector("#qrcode img");
+if(!img) return;
+
+const a=document.createElement("a");
+a.href=img.src;
+a.download="qr-code.png";
+a.click();
+}
+
+/* PRIVACY */
+
+function openPrivacy(){
+document.getElementById("privacyModal").style.display="flex";
+}
+
+function closePrivacy(){
+document.getElementById("privacyModal").style.display="none";
+}
+
+/* COOKIES */
+
+function openCookies(){
+document.getElementById("cookieModal").style.display="flex";
+}
+
+function closeCookies(){
+document.getElementById("cookieModal").style.display="none";
+}
+
+function acceptCookies(){
+localStorage.setItem("cookieConsent","accepted");
+document.getElementById("cookieBanner").style.display="none";
+}
+
+function rejectCookies(){
+localStorage.setItem("cookieConsent","rejected");
+document.getElementById("cookieBanner").style.display="none";
+}
+
+function saveCookies(){
+const analytics=document.getElementById("analytics").checked;
+localStorage.setItem("cookieConsent",analytics?"analytics":"necessary");
+closeCookies();
+}
+
+/* SHOW COOKIE BANNER */
+
+window.onload=function(){
+if(!localStorage.getItem("cookieConsent")){
+document.getElementById("cookieBanner").style.display="block";
+}
+}
+
+</script>
+
+</body>
+</html>
